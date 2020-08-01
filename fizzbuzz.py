@@ -11,9 +11,8 @@ from typing import List
 
 import numpy as np
 
-from joelnet.train import train
 from joelnet.nn import NeuralNet
-from joelnet.layers import Linear, Tanh
+from joelnet.layers import Tanh
 from joelnet.optim import SGD, Adam
 
 
@@ -55,7 +54,7 @@ net = NeuralNet(
 net.fit(
     inputs,
     targets,
-    optimizer=Adam(lr=0.001))
+    optimizer=SGD(lr=0.0001))
 
 for x in range(1, 101):
     predicted = net.predict(binary_encode(x))
