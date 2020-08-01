@@ -54,7 +54,7 @@ net = NeuralNet(
 net.fit(
     inputs,
     targets,
-    optimizer=SGD(lr=0.0001))
+    optimizer=Adam())
 
 for x in range(1, 101):
     predicted = net.predict(binary_encode(x))
