@@ -14,7 +14,8 @@ import numpy as np
 from joelnet.train import train
 from joelnet.nn import NeuralNet
 from joelnet.layers import Linear, Tanh
-from joelnet.optim import SGD
+from joelnet.optim import SGD, Adam
+
 
 def fizz_buzz_encode(x: int) -> List[int]:
     if x % 15 == 0:
@@ -33,6 +34,7 @@ def binary_encode(x: int) -> List[int]:
     """
     return [x >> i & 1 for i in range(10)]
 
+
 inputs = np.array([
     binary_encode(x)
     for x in range(101, 1024)
@@ -43,20 +45,20 @@ targets = np.array([
     for x in range(101, 1024)
 ])
 
-net = NeuralNet([
-    Linear(input_size=10, output_size=50),
-    Tanh(),
-    Linear(input_size=50, output_size=4)
-])
+net = NeuralNet(
+    hidden_layer_sizes=(50, ),
+    activation=Tanh(),
+    input_size=10,
+    output_size=4
+)
 
-train(net,
-      inputs,
-      targets,
-      num_epochs=5000,
-      optimizer=SGD(lr=0.001))
+net.fit(
+    inputs,
+    targets,
+    optimizer=Adam(lr=0.001))
 
 for x in range(1, 101):
-    predicted = net.forward(binary_encode(x))
+    predicted = net.predict(binary_encode(x))
     predicted_idx = np.argmax(predicted)
     actual_idx = np.argmax(fizz_buzz_encode(x))
     labels = [str(x), "fizz", "buzz", "fizzbuzz"]

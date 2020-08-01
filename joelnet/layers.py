@@ -6,7 +6,7 @@ a neural net might look like
 
 inputs -> Linear -> Tanh -> Linear -> output
 """
-from typing import Dict, Callable
+from typing import Dict, Callable, Tuple, Sequence
 
 import numpy as np
 
@@ -35,6 +35,7 @@ class Linear(Layer):
     """
     computes output = inputs @ w + b
     """
+
     def __init__(self, input_size: int, output_size: int) -> None:
         # inputs will be (batch_size, input_size)
         # outputs will be (batch_size, output_size)
@@ -68,11 +69,13 @@ class Linear(Layer):
 
 F = Callable[[Tensor], Tensor]
 
+
 class Activation(Layer):
     """
     An activation layer just applies a function
     elementwise to its inputs
     """
+
     def __init__(self, f: F, f_prime: F) -> None:
         super().__init__()
         self.f = f
@@ -93,6 +96,7 @@ class Activation(Layer):
 def tanh(x: Tensor) -> Tensor:
     return np.tanh(x)
 
+
 def tanh_prime(x: Tensor) -> Tensor:
     y = tanh(x)
     return 1 - y ** 2
@@ -101,3 +105,34 @@ def tanh_prime(x: Tensor) -> Tensor:
 class Tanh(Activation):
     def __init__(self):
         super().__init__(tanh, tanh_prime)
+
+
+def relu(x: Tensor) -> Tensor:
+    return x * (x > 0)
+
+
+def relu_prime(x: Tensor) -> Tensor:
+    return 1 * (x > 0)
+
+
+class Relu(Activation):
+    def __init__(self):
+        super().__init__(relu, relu_prime)
+
+
+def construct_layers(linear_layer_sizes: Tuple[int], activation: Activation) -> Sequence[Layer]:
+    layers = []
+
+    for i, current_layer_size in enumerate(linear_layer_sizes):
+        next_layer_size = linear_layer_sizes[i + 1]
+        layers.append(
+            Linear(input_size=current_layer_size, output_size=next_layer_size))
+
+        # we don't want to append activation function on the last layer
+        # so we break out of the loop when we are on the penultimate layer
+        if i == len(linear_layer_sizes) - 2:
+            break
+
+        layers.append(activation)
+
+    return layers

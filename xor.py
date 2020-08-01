@@ -4,9 +4,9 @@ learned with a simple linear model is XOR
 """
 import numpy as np
 
-from joelnet.train import train
 from joelnet.nn import NeuralNet
-from joelnet.layers import Linear, Tanh
+from joelnet.layers import Tanh, Relu
+from joelnet.optim import Adam, SGD
 
 inputs = np.array([
     [0, 0],
@@ -22,14 +22,14 @@ targets = np.array([
     [1, 0]
 ])
 
-net = NeuralNet([
-    Linear(input_size=2, output_size=2),
-    Tanh(),
-    Linear(input_size=2, output_size=2)
-])
+net = NeuralNet(
+    hidden_layer_sizes=(10, ),
+    input_size=2,
+    output_size=2,
+)
 
-train(net, inputs, targets)
+net.fit(inputs, targets, optimizer=SGD())
 
 for x, y in zip(inputs, targets):
-    predicted = net.forward(x)
+    predicted = net.predict(x)
     print(x, predicted, y)
