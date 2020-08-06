@@ -23,17 +23,19 @@ class NeuralNet:
     def fit(self, inputs: Tensor, targets: Tensor, num_epochs: int = 5000,
             iterator: DataIterator = BatchIterator(), loss: Loss = MSE(),
             optimizer: Optimizer = Adam()) -> None:
-
-        for epoch in range(num_epochs):
-            epoch_loss = 0.
-            for batch in iterator(inputs, targets):
-                predicted = self.forward(batch.inputs)
-                epoch_loss += loss.loss(predicted, batch.targets)
-                grad = loss.grad(predicted, batch.targets)
-                self.backward(grad)
-                self.step(optimizer)
+        try:
+            for epoch in range(num_epochs):
+                epoch_loss = 0.
+                for batch in iterator(inputs, targets):
+                    predicted = self.forward(batch.inputs)
+                    epoch_loss += loss.loss(predicted, batch.targets)
+                    grad = loss.grad(predicted, batch.targets)
+                    self.backward(grad)
+                    self.step(optimizer)
 
                 print(f"{epoch}: {epoch_loss}")
+        except KeyboardInterrupt: 
+            print('Force stopped the training phase.')
 
     def predict(self, inputs: Tensor) -> Tensor:
         return self.forward(inputs)

@@ -26,7 +26,7 @@ net = NeuralNet(
     hidden_layer_sizes=(10, ),
     input_size=2,
     output_size=2,
-    activation=Relu()
+    activation=Relu
 )
 
 net.fit(inputs, targets, optimizer=SGD())

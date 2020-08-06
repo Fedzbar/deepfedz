@@ -30,7 +30,6 @@ class Layer:
         """
         raise NotImplementedError
 
-
 class Linear(Layer):
     """
     computes output = inputs @ w + b
@@ -65,7 +64,6 @@ class Linear(Layer):
         self.grads["b"] = np.sum(grad, axis=0)
         self.grads["w"] = self.inputs.T @ grad
         return grad @ self.params["w"].T
-
 
 F = Callable[[Tensor], Tensor]
 
@@ -132,7 +130,7 @@ def construct_layers(linear_layer_sizes: Tuple[int], activation: Activation) -> 
         # so we break out of the loop when we are on the penultimate layer
         if i == len(linear_layer_sizes) - 2:
             break
-
-        layers.append(activation)
-
+        
+        layers.append(activation())
+    
     return layers

@@ -46,7 +46,7 @@ targets = np.array([
 
 net = NeuralNet(
     hidden_layer_sizes=(50, ),
-    activation=Tanh(),
+    activation=Tanh,
     input_size=10,
     output_size=4
 )
